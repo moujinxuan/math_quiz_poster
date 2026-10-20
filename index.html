@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>數學練習</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --primary: #4f6ef7;
+    --primary-dark: #3a57e8;
+    --success: #22c55e;
+    --error: #ef4444;
+    --text: #1e2a4a;
+    --muted: #8492b4;
+    --border: #dde3f5;
+    --shadow: 0 4px 24px rgba(79,110,247,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: var(--text);
+  }
+
+  .app { width: 100%; max-width: 560px; }
+
+  .header { text-align: center; margin-bottom: 32px; }
+  .header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+  }
+  .header p { color: var(--muted); margin-top: 4px; font-size: 0.9rem; }
+  .unit-reminder {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 6px 14px;
+    background: #eef1ff;
+    border: 1.5px solid var(--border);
+    border-radius: 99px;
+    color: var(--primary-dark);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  #start-screen { text-align: center; }
+  #start-screen .emoji { font-size: 4rem; margin-bottom: 16px; }
+  #start-screen h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  #start-screen p {
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  .count-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .count-row label { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+  .count-input {
+    width: 72px;
+    padding: 10px 12px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    text-align: center;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .count-input:focus { border-color: var(--primary); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    width: 100%;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { filter: brightness(0.92); transform: translateY(-1px); }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .progress-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: #eef1ff;
+    border-radius: 99px;
+    margin: 0 14px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .question-box {
+    background: #f7f9ff;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    min-height: 90px;
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
+  /* 只有網址加上 ?debug=1 才會顯示，正式版（學生看到的網址）不會出現 */
+  .debug-params {
+    display: none;
+    font-family: monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: #f7f9ff;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin: -16px 0 20px;
+    word-break: break-all;
+  }
+  body.debug-mode .debug-params { display: block; }
+
+  .answer-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .choice-btn {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    font-size: 1rem;
+    font-family: "Noto Sans TC", sans-serif;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .choice-btn:hover { border-color: var(--primary); background: #eef1ff; }
+  .choice-btn.selected { border-color: var(--primary); background: #eef1ff; font-weight: 600; }
+  .choice-btn:disabled { cursor: not-allowed; opacity: 0.6; }
+  .answer-input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .answer-input:focus { border-color: var(--primary); }
+  .answer-input:disabled { background: #f7f9ff; }
+  .btn-submit { padding: 13px 22px; width: auto; flex-shrink: 0; }
+
+  .feedback {
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .feedback.correct { background: #f0fdf4; border: 1.5px solid #86efac; display: block; }
+  .feedback.wrong   { background: #fff5f5; border: 1.5px solid #fca5a5; display: block; }
+  .feedback.warn    { background: #fffbeb; border: 1.5px solid #fcd34d; display: block; }
+  .feedback-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+  .feedback.correct .feedback-title { color: #16a34a; }
+  .feedback.wrong   .feedback-title { color: #dc2626; }
+  .feedback.warn    .feedback-title { color: #d97706; }
+  .feedback-solution { font-size: 0.88rem; color: var(--text); line-height: 1.8; }
+
+  #result-screen { text-align: center; }
+  #result-screen .emoji { font-size: 4rem; margin-bottom: 16px; }
+  #result-screen h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .result-stats { display: flex; gap: 12px; margin-bottom: 28px; }
+  .stat-box {
+    flex: 1;
+    background: #f7f9ff;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+  .weakness-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .weakness-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .parent-report-text {
+    text-align: left;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--text);
+    background: #f7f9ff;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 24px;
+  }
+  .parent-report-text p { margin: 0 0 12px; }
+  .parent-report-text p:last-child { margin-bottom: 0; }
+  .bar-row { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+  .bar-label { width: 36px; color: var(--text); font-weight: 600; }
+  .bar-track { flex: 1; height: 8px; background: #eef1ff; border-radius: 99px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 99px; background: var(--primary); transition: width 0.5s ease; }
+  .bar-fill.high { background: var(--error); }
+  .bar-fill.mid  { background: #f59e0b; }
+  .bar-val { width: 32px; text-align: right; color: var(--muted); font-size: 0.8rem; }
+
+  .loading { text-align: center; padding: 32px 0; color: var(--muted); }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  .error-msg { color: var(--error); font-size: 0.88rem; text-align: center; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>📐 數學練習</h1>
+    <p>自適應出題系統，弱點自動加強</p>
+    <div class="unit-reminder">寫答案時，別忘了加上單位哦！</div>
+  </div>
+
+  <!-- 開始畫面 -->
+  <div class="card" id="start-screen">
+    <div class="emoji">🧮</div>
+    <h2>準備好了嗎？</h2>
+    <p>系統會根據你的答題狀況，自動調整題目類型。<br>弱的地方多練，熟的地方少出。</p>
+    <div class="count-row">
+      <label for="total-input">總題數</label>
+      <input class="count-input" type="number" id="total-input" value="10" min="1" max="50">
+      <span style="font-size:0.9rem;color:var(--muted)">題</span>
+    </div>
+    <button class="btn btn-primary" onclick="startSession()">開始練習</button>
+    <p class="error-msg" id="start-error"></p>
+  </div>
+
+  <!-- 答題畫面 -->
+  <div class="card" id="quiz-screen" style="display:none">
+    <div class="progress-row">
+      <span class="progress-label" id="progress-left">第 1 題</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <span class="progress-label" id="progress-right">剩 — 題</span>
+    </div>
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <div>Gemini 出題中...</div>
+    </div>
+
+    <div id="question-area" style="display:none">
+      <div class="question-box" id="question-text"></div>
+      <div class="debug-params" id="debug-params"></div>
+
+      <div id="choices-area" style="display:none;flex-direction:column;gap:10px;margin-bottom:16px"></div>
+
+      <div class="answer-row" id="open-answer-row">
+        <input class="answer-input" type="text" id="answer-input"
+               placeholder="輸入你的答案..." onkeydown="if(event.key==='Enter') submitAnswer()">
+        <button class="btn btn-primary btn-submit" id="submit-btn" onclick="submitAnswer()">送出</button>
+      </div>
+      <p class="error-msg" id="quiz-error"></p>
+
+      <div class="feedback" id="feedback">
+        <div class="feedback-title" id="feedback-title"></div>
+        <div class="feedback-solution" id="feedback-solution"></div>
+      </div>
+
+      <button class="btn btn-success" id="next-btn" style="display:none" onclick="nextQuestion()">
+        下一題 →
+      </button>
+    </div>
+  </div>
+
+  <!-- 結果畫面 -->
+  <div class="card" id="result-screen" style="display:none">
+    <div class="emoji" id="result-emoji">🎉</div>
+    <h2 id="result-title">練習完成！</h2>
+    <div class="result-stats">
+      <div class="stat-box">
+        <div class="stat-num" id="res-total">0</div>
+        <div class="stat-label">總題數</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="res-correct">0</div>
+        <div class="stat-label">答對</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="res-acc">—</div>
+        <div class="stat-label">正確率</div>
+      </div>
+    </div>
+    <div class="weakness-title">弱點分析</div>
+    <div class="weakness-bars" id="weakness-bars"></div>
+    <div id="parent-report-section" style="display:none">
+      <div class="weakness-title">給家長的學習報告</div>
+      <div class="parent-report-text" id="parent-report-text"></div>
+    </div>
+    <button class="btn btn-primary" onclick="restartSession()">再練一次</button>
+  </div>
+</div>
+
+<script src="engine.js"></script>
+<script>
+// Served by the backend itself (local uvicorn or the deployed URL): call the
+// same origin. Opened as a local file instead: fall back to the local API.
+const API = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+let sessionId   = null;
+let questionId  = null;
+let totalQ      = 10;
+let answered    = 0;
+let correct     = 0;
+let lastWeights = {};
+
+// 測試用：網址加 ?debug=1 才會在題目下方顯示這題抽到的參數組合，
+// 一般給學生用的網址不會有這個 query string，所以看不到。
+if (new URLSearchParams(location.search).get('debug') === '1') {
+  document.body.classList.add('debug-mode');
+}
+// 按 D 鍵隨時切換顯示/隱藏目前這題的參數組合——參數其實一直都存在頁面裡
+// （見 renderDebugParams），只是預設用 CSS 藏起來，所以不用重新出題、
+// 也不用一開始就在網址加 ?debug=1，看到可疑的題目當下按一下就能查。
+document.addEventListener('keydown', (e) => {
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (e.key.toLowerCase() === 'd' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+    document.body.classList.toggle('debug-mode');
+  }
+});
+
+const PARAM_LABELS = {
+  operation: '運算', number_type: '數字', carry_borrow: '進退位',
+  nominalization: '名詞化', lexical_consistency: '詞彙一致',
+  presentation_order: '順序一致', question_placement: '問句位置',
+  distractor: '干擾項', response_mode: '題型',
+};
+
+function renderDebugParams(params) {
+  const text = Object.entries(params || {})
+    .map(([k, v]) => `${PARAM_LABELS[k] || k}=${v}`)
+    .join(' | ');
+  document.getElementById('debug-params').textContent = text;
+}
+
+async function startSession() {
+  totalQ = parseInt(document.getElementById('total-input').value) || 10;
+  const btn = document.querySelector('#start-screen .btn');
+  btn.disabled = true;
+  btn.textContent = '連線中...';
+  document.getElementById('start-error').textContent = '';
+
+  try {
+    const res  = await fetch(`${API}/session`, { method: 'POST' });
+    const data = await res.json();
+    sessionId = data.session_id;
+    answered  = 0;
+    correct   = 0;
+
+    document.getElementById('start-screen').style.display  = 'none';
+    document.getElementById('quiz-screen').style.display   = 'block';
+    document.getElementById('result-screen').style.display = 'none';
+    loadQuestion();
+  } catch (e) {
+    document.getElementById('start-error').textContent = '無法連線到 API，請確認 server 正在執行。';
+    btn.disabled = false;
+    btn.textContent = '開始練習';
+  }
+}
+
+function updateProgress() {
+  const pct = Math.round((answered / totalQ) * 100);
+  document.getElementById('progress-fill').style.width  = pct + '%';
+  document.getElementById('progress-left').textContent  = `第 ${answered + 1} 題`;
+  document.getElementById('progress-right').textContent = `剩 ${totalQ - answered} 題`;
+}
+
+const MAX_QUESTION_AUTO_RETRIES = 2; // AI-generated questions occasionally fail format validation server-side; just quietly ask again
+
+async function loadQuestion(retryCount = 0) {
+  updateProgress();
+  document.getElementById('loading').style.display       = 'block';
+  document.getElementById('question-area').style.display = 'none';
+  document.getElementById('quiz-error').textContent      = '';
+
+  try {
+    const res  = await fetch(`${API}/generate-question`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ session_id: sessionId }),
+    });
+    // fetch() only rejects on network failure, not on HTTP error status
+    // (e.g. 502 when the AI's question was malformed, 429 when rate
+    // limited) — so those must be checked explicitly and routed into the
+    // same retry/error handling as network failures below.
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.detail || `伺服器錯誤 (${res.status})`);
+    }
+    if (!data.question_text) {
+      throw new Error('題目內容為空');
+    }
+
+    questionId = data.question_id;
+
+    document.getElementById('question-text').innerHTML = data.question_text;
+    renderDebugParams(data.params);
+    document.getElementById('feedback').className      = 'feedback';
+    document.getElementById('next-btn').style.display  = 'none';
+    document.getElementById('submit-btn').disabled     = false;
+    document.getElementById('submit-btn').textContent  = '送出';
+
+    const isMultiple = data.response_mode === 'multiple_choice' && data.choices && data.choices.length > 0;
+    const choicesArea = document.getElementById('choices-area');
+    const openRow     = document.getElementById('open-answer-row');
+
+    if (isMultiple) {
+      // 選擇題：顯示選項按鈕，隱藏輸入框
+      openRow.style.display    = 'none';
+      choicesArea.style.display = 'flex';
+      choicesArea.innerHTML = '';
+      data.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className   = 'choice-btn';
+        btn.textContent = choice;
+        btn.onclick = () => {
+          document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          submitAnswer();
+        };
+        choicesArea.appendChild(btn);
+      });
+    } else {
+      // 問答題：顯示輸入框，隱藏選項
+      openRow.style.display     = 'flex';
+      choicesArea.style.display = 'none';
+      document.getElementById('answer-input').value    = '';
+      document.getElementById('answer-input').disabled = false;
+      document.getElementById('answer-input').focus();
+    }
+
+    document.getElementById('loading').style.display       = 'none';
+    document.getElementById('question-area').style.display = 'block';
+
+    if (window.MathJax) MathJax.typesetPromise([document.getElementById('question-text')]);
+  } catch (e) {
+    if (retryCount < MAX_QUESTION_AUTO_RETRIES) {
+      // Keep the spinner up and just try again — most failures here are a
+      // one-off malformed AI response, not a real outage.
+      setTimeout(() => loadQuestion(retryCount + 1), 400);
+      return;
+    }
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('quiz-error').innerHTML =
+      '出題失敗，請重試。' +
+      '<br><button class="btn btn-primary" style="width:auto;padding:8px 18px;margin-top:10px" onclick="loadQuestion()">重新出題</button>';
+  }
+}
+
+async function submitAnswer() {
+  // 判斷是選擇題還是問答題
+  const choicesArea = document.getElementById('choices-area');
+  const isMultiple  = choicesArea.style.display !== 'none';
+  let answer = '';
+
+  if (isMultiple) {
+    const selected = document.querySelector('.choice-btn.selected');
+    if (!selected) return;
+    answer = selected.textContent.trim();
+    document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+  } else {
+    answer = document.getElementById('answer-input').value.trim();
+    if (!answer) return;
+    document.getElementById('answer-input').disabled = true;
+  }
+
+  document.getElementById('submit-btn').disabled    = true;
+  document.getElementById('submit-btn').textContent = '判斷中...';
+  document.getElementById('quiz-error').textContent = '';
+
+  try {
+    const res  = await fetch(`${API}/submit-answer`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        question_id:    questionId,
+        session_id:     sessionId,
+        student_answer: answer,
+      }),
+    });
+    // Same pitfall as loadQuestion(): fetch() doesn't reject on HTTP error
+    // status (e.g. 429 rate limited, 502 AI judge failure), so that must be
+    // checked explicitly or a failed submission gets silently counted as a
+    // wrong answer.
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.detail || `伺服器錯誤 (${res.status})`);
+      err.status = res.status;
+      throw err;
+    }
+
+    answered++;
+    // 缺少單位現在後端也算 is_correct=true（數字對了，不該被當成答錯扣分），
+    // 所以這裡的計分跟著 is_correct 走就對了。
+    if (data.is_correct) correct++;
+    if (data.updated_weights) lastWeights = data.updated_weights;
+
+    // missing_unit 是獨立欄位，要先判斷它，不能只看 is_correct ——
+    // 缺少單位現在 is_correct 也是 true，但畫面要跟「完全答對」區分開來，
+    // 不能給一樣的綠色「答對了」樣式，同時也不算答錯。
+    const missingUnit = data.missing_unit;
+
+    const fb = document.getElementById('feedback');
+    fb.className = `feedback ${missingUnit ? 'warn' : data.is_correct ? 'correct' : 'wrong'}`;
+    document.getElementById('feedback-title').textContent =
+      missingUnit ? '⚠️ 差一點點！' : data.is_correct ? '✅ 答對了！很棒！' : '❌ 答錯了，再加油！';
+    // data.explanation 是後端直接算好的詳解／缺單位提示，跟 data.feedback
+    // 分開回傳，不用再從整句話裡用字串分割拆出來（那樣一旦詳解內容裡剛好也
+    // 出現「正確解法：」這幾個字就會被誤切，顯示不完整）。
+    document.getElementById('feedback-solution').innerHTML = data.explanation || '';
+
+    if (window.MathJax) MathJax.typesetPromise([document.getElementById('feedback-solution')]);
+
+    const isLast = answered >= totalQ;
+    const nextBtn = document.getElementById('next-btn');
+    nextBtn.textContent = isLast ? '查看結果 →' : '下一題 →';
+    nextBtn.className   = isLast ? 'btn btn-primary' : 'btn btn-success';
+    nextBtn.style.display = 'block';
+    document.getElementById('submit-btn').textContent = '送出';
+  } catch (e) {
+    document.getElementById('submit-btn').disabled    = false;
+    document.getElementById('submit-btn').textContent = '送出';
+    document.getElementById('quiz-error').textContent = e.status === 429
+      ? '太多人在用，請稍等幾秒後再送出一次。'
+      : '送出失敗，請重試。';
+    if (!isMultiple) document.getElementById('answer-input').disabled = false;
+    else document.querySelectorAll('.choice-btn').forEach(b => b.disabled = false);
+  }
+}
+
+function nextQuestion() {
+  if (answered >= totalQ) {
+    showResult();
+  } else {
+    loadQuestion();
+  }
+}
+
+async function showResult() {
+  document.getElementById('quiz-screen').style.display   = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  const acc = Math.round(correct / totalQ * 100);
+  document.getElementById('res-total').textContent   = totalQ;
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-acc').textContent     = acc + '%';
+  document.getElementById('result-emoji').textContent =
+    acc >= 80 ? '🎉' : acc >= 50 ? '💪' : '📚';
+  document.getElementById('result-title').textContent =
+    acc >= 80 ? '太厲害了！' : acc >= 50 ? '繼續加油！' : '多練習就會進步！';
+
+  const bars = document.getElementById('weakness-bars');
+  bars.innerHTML = '';
+
+  // 只顯示這四個參數，並給中文標籤
+  const SHOW_PARAMS = {
+    "operation":    { label: "運算",   values: { "加法": "加法", "減法": "減法" } },
+    "carry_borrow": { label: "進借位", values: { "True": "有進借位", "False": "無進借位" } },
+    "distractor":   { label: "干擾項", values: { "none": "無干擾", "linguistic": "文字干擾", "numerical": "數字干擾", "both": "兩者都有" } },
+    "response_mode":{ label: "題型",   values: { "open": "問答題", "multiple_choice": "選擇題" } },
+  };
+
+  // 把 lastWeights 解析成 { param_name: { param_value: accuracy } }
+  const grouped = {};
+  Object.entries(lastWeights).forEach(([key, acc]) => {
+    const [param, ...rest] = key.split('=');
+    const val = rest.join('=');
+    if (!grouped[param]) grouped[param] = {};
+    grouped[param][val] = acc;
+  });
+
+  Object.entries(SHOW_PARAMS).forEach(([paramKey, meta]) => {
+    const data = grouped[paramKey];
+    if (!data) return;
+
+    // 參數標題
+    bars.innerHTML += `<div style="font-size:0.82rem;font-weight:700;color:var(--muted);margin-top:14px;margin-bottom:6px;letter-spacing:0.04em">${meta.label}</div>`;
+
+    Object.entries(meta.values).forEach(([rawVal, displayVal]) => {
+      const acc = data[rawVal];
+      if (acc === undefined) return;
+      const color = acc < 50 ? 'var(--error)' : acc < 70 ? '#f59e0b' : 'var(--success)';
+      bars.innerHTML += `
+        <div class="bar-row">
+          <span style="width:72px;font-size:0.85rem;color:var(--text)">${displayVal}</span>
+          <div class="bar-track" style="flex:1">
+            <div style="height:100%;border-radius:99px;background:${color};width:${acc}%;transition:width 0.5s ease"></div>
+          </div>
+          <span class="bar-val">${acc}%</span>
+        </div>`;
+    });
+  });
+
+  // 給家長的學習報告：後端已經用結構化邏輯判斷過哪些弱點樣本數夠多、有意義，
+  // 標題跟正確率是後端直接組好的 <strong> 標籤（不假設 AI 會自己標粗體），
+  // 這裡用 innerHTML 顯示才會真的變粗體，不是用 textContent 顯示純文字。
+  const reportSection = document.getElementById('parent-report-section');
+  const reportText     = document.getElementById('parent-report-text');
+  reportSection.style.display = 'block';
+  reportText.innerHTML = '<p>報告產生中...</p>';
+  try {
+    const res  = await fetch(`${API}/stats/${sessionId}`);
+    const data = await res.json();
+    reportText.innerHTML = data.parent_report || '<p>目前無法產生學習報告。</p>';
+  } catch (e) {
+    reportText.innerHTML = '<p>目前無法產生學習報告，請稍後再試。</p>';
+  }
+}
+
+function restartSession() {
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display  = 'block';
+  const btn = document.querySelector('#start-screen .btn');
+  btn.disabled = false;
+  btn.textContent = '開始練習';
+}
+</script>
+</body>
+</html>
